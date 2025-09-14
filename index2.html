@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce AI Assistant Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General Body Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50; /* Dark blue-grey */
+            color: #ecf0f1; /* Light grey for text */
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh; /* Make sidebar take full viewport height */
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header i {
+            font-size: 48px;
+            color: #1abc9c; /* Turquoise */
+            margin-bottom: 10px;
+        }
+
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1; /* Allow menu to take available space */
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: #ecf0f1;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            font-size: 1.1em;
+        }
+
+        .sidebar-menu li a i {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .sidebar-menu li a:hover,
+        .sidebar-menu li.active a {
+            background-color: #34495e; /* Slightly lighter dark blue-grey */
+            color: #1abc9c;
+            transform: translateX(5px);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto; /* Enable scrolling for main content */
+        }
+
+        /* Header Styling */
+        header {
+            background-color: #ffffff;
+            padding: 25px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        .user-profile i {
+            font-size: 1.8em;
+            margin-left: 10px;
+            color: #1abc9c;
+        }
+
+        /* Dashboard Sections */
+        .dashboard-section {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            display: none; /* Hidden by default, shown by JavaScript */
+        }
+
+        .dashboard-section.active {
+            display: block; /* Show active section */
+        }
+
+        .dashboard-section h2 {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin-top: 0;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .dashboard-section h2 i {
+            margin-right: 15px;
+            color: #1abc9c;
+            font-size: 1.2em;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background-color: #e8f6f3; /* Light green/blue */
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #1abc9c;
+            margin: 10px 0;
+        }
+
+        .stat-card .stat-icon {
+            position: absolute;
+            bottom: -15px;
+            right: -15px;
+            font-size: 5em;
+            color: rgba(26, 188, 156, 0.1); /* Transparent turquoise */
+            z-index: 0;
+        }
+
+        /* Chart Area (Mock) */
+        .chart-area {
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-area h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .mock-chart {
+            height: 250px;
+            background: linear-gradient(to right, #a2ded0, #61c4b7);
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-end;
+            padding: 15px;
+            gap: 5px;
+        }
+
+        .mock-chart::before {
+            content: 'Mock Chart Data';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5em;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 700;
+        }
+
+        /* Table Styles */
+        .customer-list-container,
+        .product-list-container,
+        .competitor-list-container,
+        .purchase-history-list-container { /* Added for purchase history */
+            margin-top: 30px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        table th, table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        table th {
+            background-color: #eef4f8; /* Light blue-grey */
+            color: #444;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        table tr:last-child td {
+            border-bottom: none;
+        }
+
+        table tbody tr:hover {
+            background-color: #f9fbfd;
+        }
+
+        /* Buttons */
+        button {
+            background-color: #1abc9c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #17a689;
+            transform: translateY(-2px);
+        }
+
+        /* Small button for table actions */
+        button.small-button {
+            padding: 5px 10px;
+            font-size: 0.8em;
+        }
+
+        /* AI Insights Sections */
+        .ai-section {
+            background-color: #f8fcfb;
+            border: 1px solid #e0f0f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .ai-section h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 1px dashed #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .ai-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .ai-section ul li {
+            background-color: #e8f6f3;
+            padding: 12px 18px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 5px solid #1abc9c;
+            font-size: 0.95em;
+            color: #444;
+        }
+
+        /* Financial Summary Grid */
+        .financial-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .financial-card {
+            background-color: #f0f8ff; /* Light blue */
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #3498db; /* Blue accent */
+            transition: transform 0.3s ease;
+        }
+
+        .financial-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .financial-card h4 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .financial-card p {
+            font-size: 2em;
+            font-weight: 700;
+            color: #3498db;
+            margin: 0;
+        }
+
+        /* Website Health */
+        .problem-list ul li {
+            background-color: #fdeaea; /* Light red for errors */
+            border-left-color: #e74c3c; /* Red accent */
+        }
+        .problem-list ul li.warning {
+            background-color: #fff9e6; /* Light yellow for warnings */
+            border-left-color: #f39c12; /* Yellow accent */
+        }
+
+
+        /* Store Design Ideas */
+        .design-section-content { /* Added to group design related content */
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #fdfdfd;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            margin-bottom: 20px;
+        }
+
+        .design-section-content h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 1px dashed #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .design-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .design-controls label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .design-controls select,
+        .design-controls input[type="text"] {
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            flex-grow: 1; /* Allow inputs to take space */
+            max-width: 250px;
+        }
+
+        .design-controls button {
+            padding: 10px 25px;
+        }
+
+        .design-output { /* Renamed from .design-output to be more specific for new designs */
+            background-color: #f8f8f8;
+            border: 1px dashed #ddd;
+            border-radius: 10px;
+            padding: 25px;
+            min-height: 150px;
+        }
+
+        .design-output h4 { /* Changed from h3 to h4 for hierarchical correctness */
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .design-output p {
+            line-height: 1.6;
+            color: #444;
+        }
+        .design-output img,
+        #current-design-preview img { /* Apply styles to both current and generated images */
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .color-circle {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            vertical-align: middle;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+        /* AI Chat Specific Styles */
+        .ai-chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            height: 500px; /* Fixed height for chat scroll */
+            overflow-y: auto;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+            margin-top: 20px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .user-message {
+            align-self: flex-end;
+            background-color: #007bff;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+        .ai-message {
+            align-self: flex-start;
+            background-color: #e2e6ea;
+            color: #333;
+            border-bottom-left-radius: 2px;
+        }
+        .ai-input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .ai-input-area input[type="text"] {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 20px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .ai-input-area input[type="text"]:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        .ai-input-area button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+        .ai-input-area button:hover:not(:disabled) {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+        .ai-input-area button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .quick-queries {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            justify-content: center;
+        }
+        .quick-queries button {
+            background-color: #e0f2ff;
+            color: #0056b3;
+            border: 1px solid #b3e0ff;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .quick-queries button:hover:not(:disabled) {
+            background-color: #b3e0ff;
+            color: #003063;
+        }
+
+        /* Basic Animations (CSS-only examples) */
+
+        /* Sidebar menu item hover animation */
+        .sidebar-menu li a {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-menu li a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .sidebar-menu li a:hover::before {
+            left: 100%;
+        }
+
+        /* Stat card pop-up on hover (already implemented) */
+        /* .stat-card:hover { transform: translateY(-8px); box-shadow: ...; } */
+
+        /* Fade-in for sections (will be controlled by JS for active class) */
+        .dashboard-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+
+        .dashboard-section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Keyframe animation for icons in stat cards (simple pulse) */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.1); opacity: 0.2; }
+            100% { transform: scale(1); opacity: 0.1; }
+        }
+
+        .stat-card .stat-icon {
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Invoice specific styles */
+        #invoice-details {
+            background-color: #f8f8f8;
+            border: 1px dashed #ddd;
+            border-radius: 10px;
+            padding: 25px;
+            min-height: 150px;
+            margin-top: 20px;
+        }
+        #invoice-details p strong {
+            display: inline-block;
+            min-width: 120px;
+        }
+        #invoice-items-table {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+        }
+        #invoice-items-table th, #invoice-items-table td {
+            border: 1px solid #eee;
+            padding: 8px;
+            text-align: left;
+        }
+        #invoice-items-table th {
+            background-color: #eef4f8;
+        }
+
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                padding: 15px;
+            }
+            .sidebar-header h2 {
+                display: none; /* Hide text on small screens */
+            }
+            .sidebar-header i {
+                margin-bottom: 0;
+            }
+            .sidebar-menu li a {
+                justify-content: center;
+                padding: 12px 0;
+            }
+            .sidebar-menu li a i {
+                margin-right: 0;
+            }
+            .sidebar-menu li a span {
+                display: none; /* Hide text for menu items */
+            }
+            .main-content {
+                padding: 20px;
+            }
+            header h1 {
+                font-size: 1.5em;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 15px;
+            }
+            .dashboard-section {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                padding: 15px 0;
+                flex-direction: row;
+                justify-content: center;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                position: relative;
+                overflow-x: auto; /* Enable horizontal scrolling for menu */
+            }
+            .sidebar-header {
+                display: none;
+            }
+            .sidebar-menu {
+                flex-direction: row;
+                justify-content: center;
+            }
+            .sidebar-menu li {
+                margin-bottom: 0;
+                margin-right: 15px;
+            }
+            .sidebar-menu li:last-child {
+                margin-right: 0;
+            }
+            .sidebar-menu li a {
+                padding: 8px 12px;
+                font-size: 0.9em;
+                flex-shrink: 0; /* Prevent items from shrinking too much */
+            }
+            .sidebar-menu li a i {
+                margin-right: 5px;
+            }
+            .main-content {
+                padding: 15px;
+            }
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px;
+            }
+            header h1 {
+                font-size: 1.3em;
+                margin-bottom: 10px;
+            }
+            .user-profile {
+                font-size: 0.9em;
+            }
+            .dashboard-section h2 {
+                font-size: 1.5em;
+                padding-bottom: 10px;
+                margin-bottom: 15px;
+            }
+            .stat-card .stat-value {
+                font-size: 2em;
+            }
+            .financial-card p {
+                font-size: 1.6em;
+            }
+            .design-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .design-controls label,
+            .design-controls select,
+            .design-controls input,
+            .design-controls button {
+                width: 100%;
+                max-width: none;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-robot"></i>
+            <h2>AI Dashboard</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="active"><a href="#overview"><i class="fas fa-tachometer-alt"></i> Overview</a></li>
+            <li><a href="#customers"><i class="fas fa-users"></i> Customers</a></li>
+            <li><a href="#inventory"><i class="fas fa-boxes"></i> Inventory</a></li>
+            <li><a href="#competitors"><i class="fas fa-chart-line"></i> Competitors</a></li>
+            <li><a href="#financials"><i class="fas fa-dollar-sign"></i> Financials</a></li>
+            <li><a href="#purchase-history"><i class="fas fa-history"></i> Purchase History</a></li>
+            <li><a href="#invoices"><i class="fas fa-file-invoice-dollar"></i> Invoices</a></li>
+            <li><a href="#ai-insights"><i class="fas fa-lightbulb"></i> AI Insights</a></li>
+            <li><a href="#website-health"><i class="fas fa-heartbeat"></i> Website Health</a></li>
+            <li><a href="#design-ideas"><i class="fas fa-palette"></i> Store Design Previews</a></li> <li><a href="#ai_chat"><i class="fas fa-comments"></i> AI Assistant</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1>Welcome to Your AI-Powered E-commerce Hub</h1>
+            <div class="user-profile">
+                <span>Admin User</span>
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </header>
+
+        <section id="overview" class="dashboard-section active">
+            <h2><i class="fas fa-tachometer-alt"></i> Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Sales</h3>
+                    <p class="stat-value" id="overview-total-sales">---</p>
+                    <i class="fas fa-shopping-cart stat-icon"></i>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Revenue</h3>
+                    <p class="stat-value" id="overview-total-revenue">---</p>
+                    <i class="fas fa-money-bill-wave stat-icon"></i>
+                </div>
+                <div class="stat-card">
+                    <h3>Net Profit</h3>
+                    <p class="stat-value" id="overview-net-profit">---</p>
+                    <i class="fas fa-chart-line stat-icon"></i>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Customers</h3>
+                    <p class="stat-value" id="overview-active-customers">---</p>
+                    <i class="fas fa-users stat-icon"></i>
+                </div>
+            </div>
+            <div class="chart-area">
+                <h3>Revenue Trend (Mock Data)</h3>
+                <div class="mock-chart"></div>
+            </div>
+        </section>
+
+        <section id="customers" class="dashboard-section">
+            <h2><i class="fas fa-users"></i> Customers</h2>
+            <p>Customer data will be displayed here, with options to view purchase history and loyalty recommendations.</p>
+            <div class="customer-list-container">
+                <table id="customers-table">
+                    <thead>
+                        <tr>
+                            <th>Customer ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customer-table-body">
+                        </tbody>
+                </table>
+                <div id="customers-data-message" class="loading">Loading customer data...</div>
+            </div>
+        </section>
+
+        <section id="inventory" class="dashboard-section">
+            <h2><i class="fas fa-boxes"></i> Inventory</h2>
+            <p>Real-time inventory levels and AI-driven restock alerts.</p>
+            <div class="inventory-alerts">
+                <h3>Low Stock Alerts</h3>
+                <ul id="low-stock-list">
+                    <li>No low stock alerts at the moment.</li>
+                </ul>
+            </div>
+            <div class="product-list-container">
+                <h3>All Products</h3>
+                <table id="products-table">
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Name</th>
+                            <th>Stock Level</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-table-body">
+                        </tbody>
+                </table>
+                 <div id="inventory-data-message" class="loading">Loading inventory data...</div>
+            </div>
+        </section>
+
+        <section id="competitors" class="dashboard-section">
+            <h2><i class="fas fa-chart-line"></i> Competitor Analysis</h2>
+            <p>Insights into competitor pricing and product availability, directly from web scraping.</p>
+            <div class="competitor-list-container">
+                <table id="competitors-table">
+                    <thead>
+                        <tr>
+                            <th>Competitor Product Name</th>
+                            <th>Price</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody id="competitors-table-body">
+                        </tbody>
+                </table>
+                <div id="competitors-data-message" class="loading">Loading competitor data...</div>
+            </div>
+        </section>
+
+        <section id="financials" class="dashboard-section">
+            <h2><i class="fas fa-dollar-sign"></i> Financial Summary</h2>
+            <div class="financial-summary-grid">
+                <div class="financial-card">
+                    <h4>Total Revenue</h4>
+                    <p id="total-revenue-value">---</p>
+                </div>
+                <div class="financial-card">
+                    <h4>Cost of Goods Sold (COGS)</h4>
+                    <p id="total-cogs-value">---</p>
+                </div>
+                <div class="financial-card">
+                    <h4>Gross Profit</h4>
+                    <p id="gross-profit-value">---</p>
+                </div>
+                <div class="financial-card">
+                    <h4>Operating Expenses</h4>
+                    <p id="operating-expenses-value">---</p>
+                </div>
+                <div class="financial-card">
+                    <h4>Net Profit</h4>
+                    <p id="net-profit-value">---</p>
+                </div>
+                <div class="financial-card">
+                    <h4>Tax Payable</h4>
+                    <p id="tax-payable-value">---</p>
+                </div>
+            </div>
+            <div id="financials-data-message" class="loading">Loading financial data...</div>
+        </section>
+
+        <section id="purchase-history" class="dashboard-section">
+            <h2><i class="fas fa-history"></i> Purchase History</h2>
+            <p>View all recorded purchases in the system.</p>
+            <div class="purchase-history-list-container">
+                <table id="purchase-history-table">
+                    <thead>
+                        <tr>
+                            <th>Purchase ID</th>
+                            <th>Customer ID</th>
+                            <th>Product ID</th>
+                            <th>Quantity</th>
+                            <th>Price per Unit</th>
+                            <th>Total Price</th>
+                            <th>Timestamp</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="purchase-history-table-body">
+                        </tbody>
+                </table>
+                <div id="purchase-history-data-message" class="loading">Loading purchase history...</div>
+            </div>
+        </section>
+
+        <section id="invoices" class="dashboard-section">
+            <h2><i class="fas fa-file-invoice-dollar"></i> Generate Invoice</h2>
+            <p>Enter a Purchase ID to generate and view its invoice.</p>
+            <div class="invoice-controls">
+                <label for="invoice-purchase-id">Purchase ID:</label>
+                <input type="text" id="invoice-purchase-id" placeholder="e.g., PUR001">
+                <button id="generate-invoice-btn">Generate Invoice</button>
+            </div>
+            <div id="invoice-details">
+                <h3>Invoice Details:</h3>
+                <p>Enter a Purchase ID and click "Generate Invoice" to see details.</p>
+                </div>
+        </section>
+
+        <section id="ai-insights" class="dashboard-section">
+            <h2><i class="fas fa-lightbulb"></i> AI Insights & Recommendations</h2>
+            <div class="ai-section">
+                <h3>Loyalty Rewards Recommendations (Active Customers)</h3>
+                <div id="loyalty-recommendations">
+                    <p class="loading">Loading AI recommendations for active customers...</p>
+                </div>
+            </div>
+            <div class="ai-section">
+                <h3>Dynamic Pricing & Production Advice</h3>
+                <ul id="dynamic-advice-list">
+                    <li><p class="loading">Generating dynamic pricing advice...</p></li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="website-health" class="dashboard-section">
+            <h2><i class="fas fa-heartbeat"></i> Website Health & Bug Detection</h2>
+            <div class="problem-list">
+                <h3>Detected Problems</h3>
+                <ul id="website-problems-list">
+                    <li><p class="loading">Detecting website problems...</p></li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="design-ideas" class="dashboard-section">
+            <h2><i class="fas fa-palette"></i> Store Design Previews</h2> <div class="design-section-content">
+                <h3>Current Live Store Design</h3>
+                <div id="current-design-preview">
+                    <p class="loading">Loading current design preview...</p>
+                    </div>
+            </div>
+
+            <div class="design-section-content">
+                <h3>Generate New Design Idea (Mock Preview)</h3>
+                <div class="design-controls">
+                    <label for="design-trend">Trend:</label>
+                    <select id="design-trend">
+                        <option value="Modern">Modern</option>
+                        <option value="Bohemian">Bohemian</option>
+                        <option value="Industrial">Industrial</option>
+                        <option value="Vintage">Vintage</option>
+                        <option value="Minimalist">Minimalist</option>
+                    </select>
+                    <label for="store-type">Store Type:</label>
+                    <input type="text" id="store-type" value="fashion boutique" placeholder="e.g., tech store, cafe">
+                    <button id="generate-design-btn">Generate Idea</button>
+                </div>
+                <div class="design-output" id="generated-design-output"> <h4>Your Design Idea:</h4>
+                    <p id="design-description">Select a trend and store type to generate a design idea.</p>
+                    <p><strong>Color Palette:</strong> <span id="design-colors"></span></p>
+                    <p><strong>Typography:</strong> <span id="design-typography"></span></p>
+                    <p><strong>Unique Element:</strong> <span id="design-unique-element"></span></p>
+                    <img id="design-preview-image" src="" alt="Design Preview" style="display:none;"> </div>
+            </div>
+        </section>
+
+        <section id="ai_chat" class="dashboard-section">
+            <h2><i class="fas fa-comments"></i> AI Business Assistant</h2>
+            <div class="ai-chat-container" id="ai-chat-container">
+                <div class="message ai-message">
+                    <p style="font-weight: 600; margin-bottom: 5px;">AI:</p>
+                    <p style="white-space: pre-wrap; margin: 0;">Hello! How can I assist your e-commerce store today?</p>
+                </div>
+            </div>
+            <div class="quick-queries">
+                <button onclick="sendQuickQuery('What are our current financials?')">Financials Summary</button>
+                <button onclick="sendQuickQuery('Do we need to restock any products?')">Restocking Advice</button>
+                <button onclick="sendQuickQuery('Suggest a loyalty reward for customer C001.')">Loyalty Reward (C001)</button>
+                <button onclick="sendQuickQuery('Give me a design idea for a Minimalist fashion boutique.')">Design Idea (Minimalist)</button>
+                <button onclick="sendQuickQuery('Check for any website problems.')">Website Health</button>
+                <button onclick="sendQuickQuery('Show me current competitor prices.')">Competitor Prices</button>
+                <button onclick="sendQuickQuery('Analyze dynamic pricing and production.')">Pricing/Production Advice</button>
+            </div>
+            <div class="ai-input-area">
+                <input type="text" id="ai-query-input" placeholder="Ask your AI assistant a question about your business...">
+                <button id="send-query-button"><i class="fas fa-paper-plane"></i> Send</button>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://127.0.0.1:5000'; // Replace with your backend URL if different
+        let aiChatHistory = [{ role: "assistant", content: "Hello! How can I assist your e-commerce store today?" }];
+        let isAiLoading = false;
+
+        // --- Tab Switching Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+            const dashboardSections = document.querySelectorAll('.dashboard-section');
+
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent default anchor link behavior
+
+                    // Deactivate all links and hide all content sections
+                    document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+                    dashboardSections.forEach(section => section.classList.remove('active'));
+
+                    // Activate clicked link
+                    link.parentElement.classList.add('active');
+
+                    // Show the corresponding section
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                    }
+
+                    // --- Specific actions for tabs ---
+                    if (targetId === 'ai-insights') {
+                        displayActiveCustomerLoyaltyRewards(); // Fetch for all active customers
+                        displayDynamicPricingAdvice(); 
+                    } else if (targetId === 'website-health') {
+                        displayWebsiteProblems(); 
+                    } else if (targetId === 'design-ideas') { // Corrected target for Design Ideas tab
+                        fetchCurrentStoreDesign(); // Fetch current design
+                        // Clear generated design area and set initial text for next generation
+                        document.getElementById('generated-design-output').innerHTML = `
+                            <h4>Your Design Idea:</h4>
+                            <p id="design-description">Select a trend and store type to generate a design idea.</p>
+                            <p><strong>Color Palette:</strong> <span id="design-colors"></span></p>
+                            <p><strong>Typography:</strong> <span id="design-typography"></span></p>
+                            <p><strong>Unique Element:</strong> <span id="design-unique-element"></span></p>
+                            <img id="design-preview-image" src="" alt="Design Preview" style="display:none;">
+                        `;
+                    } else if (targetId === 'purchase-history') { 
+                        fetchPurchases(); 
+                    } else if (targetId === 'invoices') { 
+                         document.getElementById('invoice-details').innerHTML = '<h3>Invoice Details:</h3><p>Enter a Purchase ID and click "Generate Invoice" to see details.</p>';
+                    }
+                });
+            });
+
+            // Initial activation of the first tab
+            document.querySelector('.sidebar-menu li.active a').click();
+
+            // --- Data Fetching Functions (for direct API routes like /customers, /inventory, /purchases) ---
+            const fetchData = async (endpoint, tbodyId, messageDivId, renderFunction) => {
+                const tbody = document.getElementById(tbodyId);
+                const messageDiv = document.getElementById(messageDivId);
+                
+                if (!tbody || !messageDiv) {
+                    console.error(`Missing elements for fetchData: tbodyId=${tbodyId}, messageDivId=${messageDivId}`);
+                    return;
+                }
+
+                messageDiv.innerHTML = `<p class="loading">Loading data...</p>`;
+                tbody.innerHTML = ''; // Clear existing table rows
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    renderFunction(tbody, data, messageDiv); // Pass tbody and messageDiv
+                } catch (error) {
+                    messageDiv.innerHTML = `<p class="error-message">Error: ${error.message}.</p>`;
+                    tbody.innerHTML = ''; // Clear table body on error
+                }
+            };
+
+            // --- Render Functions (How data is displayed for direct API routes) ---
+            const renderFinancials = (container, data, messageDiv) => {
+                if (data.error) {
+                    messageDiv.innerHTML = `<p class="error-message">Error: ${data.error}</p>`;
+                    return;
+                }
+                document.getElementById('total-revenue-value').textContent = `$${data.total_revenue?.toFixed(2) || 'N/A'}`;
+                document.getElementById('total-cogs-value').textContent = `$${data.total_cogs?.toFixed(2) || 'N/A'}`;
+                document.getElementById('gross-profit-value').textContent = `$${data.gross_profit?.toFixed(2) || 'N/A'}`;
+                document.getElementById('operating-expenses-value').textContent = `$${data.operating_expenses?.toFixed(2) || 'N/A'}`;
+                document.getElementById('net-profit-value').textContent = `$${data.net_profit?.toFixed(2) || 'N/A'}`;
+                document.getElementById('tax-payable-value').textContent = `$${data.tax_payable?.toFixed(2) || 'N/A'}`;
+                
+                // Update overview stats
+                document.getElementById('overview-total-sales').textContent = data.total_sales_count?.toLocaleString() || 'N/A';
+                document.getElementById('overview-total-revenue').textContent = `$${data.total_revenue?.toFixed(2) || 'N/A'}`;
+                document.getElementById('overview-net-profit').textContent = `$${data.net_profit?.toFixed(2) || 'N/A'}`;
+                messageDiv.innerHTML = ''; // Clear loading message on success
+            };
+
+            const renderCustomers = (tbody, data, messageDiv) => {
+                if (data.error) {
+                    messageDiv.innerHTML = `<p class="error-message">Error: ${data.error}</p>`;
+                    return;
+                }
+                tbody.innerHTML = ''; // Clear existing rows
+                data.forEach(customer => {
+                    const row = tbody.insertRow();
+                    row.insertCell().textContent = customer.customer_id;
+                    row.insertCell().textContent = customer.name;
+                    row.insertCell().textContent = customer.email;
+                    const actionCell = row.insertCell();
+                    const loyaltyBtn = document.createElement('button');
+                    loyaltyBtn.textContent = 'Loyalty Rec.';
+                    loyaltyBtn.classList.add('small-button'); 
+                    loyaltyBtn.style.padding = '5px 10px'; 
+                    loyaltyBtn.style.fontSize = '0.8em';
+                    loyaltyBtn.onclick = () => sendAiQuery(`recommend loyalty rewards for customer ${customer.customer_id}`, 'loyalty-recommendations');
+                    actionCell.appendChild(loyaltyBtn);
+                });
+                document.getElementById('overview-active-customers').textContent = data.length.toLocaleString();
+                messageDiv.innerHTML = ''; // Clear loading message on success
+            };
+
+            const renderInventory = (tbody, data, messageDiv) => {
+                if (data.error) {
+                    messageDiv.innerHTML = `<p class="error-message">Error: ${data.error}</p>`;
+                    return;
+                }
+                tbody.innerHTML = ''; // Clear existing rows
+                const lowStockList = document.getElementById('low-stock-list');
+                lowStockList.innerHTML = ''; // Clear existing alerts
+
+                let hasLowStock = false;
+                data.forEach(product => {
+                    const row = tbody.insertRow();
+                    row.insertCell().textContent = product.product_id;
+                    row.insertCell().textContent = product.name;
+                    row.insertCell().textContent = product.stock_level;
+                    row.insertCell().textContent = `$${product.price?.toFixed(2) || 'N/A'}`;
+
+                    if (product.stock_level < 50) { // Matches AIModules simplified logic
+                        hasLowStock = true;
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `${product.name} (ID: ${product.product_id}) is low on stock (${product.stock_level}). Recommendation: Restock immediately!`;
+                        lowStockList.appendChild(listItem);
+                    }
+                });
+
+                if (!hasLowStock) {
+                    lowStockList.innerHTML = '<li>No low stock alerts at the moment.</li>';
+                }
+                messageDiv.innerHTML = ''; // Clear loading message on success
+            };
+
+            const renderCompetitors = (tbody, data, messageDiv) => {
+                if (data.error) {
+                    messageDiv.innerHTML = `<p class="error-message">Error: ${data.error}. Make sure web_scraper.py was run!</p>`;
+                    return;
+                }
+                tbody.innerHTML = ''; // Clear existing rows
+                if (data.length === 0) {
+                    messageDiv.innerHTML = '<p>No competitor data found. Run web_scraper.py and restart backend.</p>';
+                    return;
+                }
+                data.forEach(product => {
+                    const row = tbody.insertRow();
+                    row.insertCell().textContent = product.product_name;
+                    row.insertCell().textContent = `$${product.price?.toFixed(2) || 'N/A'}`;
+                    row.insertCell().textContent = product.last_updated || 'N/A'; // Assuming last_updated field
+                });
+                messageDiv.innerHTML = ''; // Clear loading message on success
+            };
+
+            const renderPurchases = (tbody, data, messageDiv) => { 
+                if (data.error) {
+                    messageDiv.innerHTML = `<p class="error-message">Error: ${data.error}</p>`;
+                    return;
+                }
+                tbody.innerHTML = ''; 
+                data.forEach(purchase => {
+                    const row = tbody.insertRow();
+                    row.insertCell().textContent = purchase.purchase_id;
+                    row.insertCell().textContent = purchase.customer_id;
+                    row.insertCell().textContent = purchase.product_id;
+                    row.insertCell().textContent = purchase.quantity;
+                    row.insertCell().textContent = `$${purchase.price?.toFixed(2) || 'N/A'}`;
+                    row.insertCell().textContent = `$${(purchase.quantity * purchase.price)?.toFixed(2) || 'N/A'}`;
+                    row.insertCell().textContent = purchase.timestamp;
+                    const actionCell = row.insertCell();
+                    const invoiceBtn = document.createElement('button');
+                    invoiceBtn.textContent = 'View Invoice';
+                    invoiceBtn.classList.add('small-button');
+                    invoiceBtn.style.padding = '5px 10px';
+                    invoiceBtn.style.fontSize = '0.8em';
+                    invoiceBtn.onclick = () => {
+                        document.getElementById('invoice-purchase-id').value = purchase.purchase_id;
+                        document.querySelector('a[href="#invoices"]').click(); 
+                        generateInvoice(); 
+                    };
+                    actionCell.appendChild(invoiceBtn);
+                });
+                messageDiv.innerHTML = ''; 
+            };
+
+
+            // --- API Call Functions (Wrappers for fetchData) ---
+            const fetchFinancials = () => fetchData('/financials', 'financials-data-message', 'financials-data-message', renderFinancials);
+            const fetchCustomers = () => fetchData('/customers', 'customer-table-body', 'customers-data-message', renderCustomers);
+            const fetchInventory = () => fetchData('/inventory', 'product-table-body', 'inventory-data-message', renderInventory);
+            const fetchCompetitors = () => fetchData('/competitors', 'competitors-table-body', 'competitors-data-message', renderCompetitors);
+            const fetchPurchases = () => fetchData('/purchases', 'purchase-history-table-body', 'purchase-history-data-message', renderPurchases);
+
+            const generateInvoice = async () => {
+                const purchaseIdInput = document.getElementById('invoice-purchase-id');
+                const purchaseId = purchaseIdInput.value.trim();
+                const invoiceDetailsDiv = document.getElementById('invoice-details');
+
+                if (!purchaseId) {
+                    invoiceDetailsDiv.innerHTML = '<h3>Invoice Details:</h3><p class="error-message">Please enter a Purchase ID.</p>';
+                    return;
+                }
+
+                invoiceDetailsDiv.innerHTML = '<h3>Invoice Details:</h3><p class="loading">Generating invoice for Purchase ID: ' + purchaseId + '...</p>';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/invoice/${purchaseId}`);
+                    const data = await response.json();
+
+                    if (data.error) {
+                        invoiceDetailsDiv.innerHTML = `<h3>Invoice Details:</h3><p class="error-message">${data.error}</p>`;
+                        return;
+                    }
+
+                    let invoiceHtml = `
+                        <h3>Invoice Details:</h3>
+                        <p><strong>Invoice ID:</strong> ${data.invoice_id}</p>
+                        <p><strong>Date:</strong> ${data.date}</p>
+                        <h4>Customer Information:</h4>
+                        <p><strong>Name:</strong> ${data.customer.name}</p>
+                        <p><strong>Customer ID:</strong> ${data.customer.customer_id}</p>
+                        <p><strong>Email:</strong> ${data.customer.email || 'N/A'}</p>
+                        <h4>Items:</h4>
+                        <table id="invoice-items-table">
+                            <thead>
+                                <tr>
+                                    <th>Product ID</th>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Total Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    data.items.forEach(item => {
+                        invoiceHtml += `
+                            <tr>
+                                <td>${item.product_id}</td>
+                                <td>${item.product_name}</td>
+                                <td>${item.quantity}</td>
+                                <td>$${item.unit_price?.toFixed(2) || 'N/A'}</td>
+                                <td>$${item.total_price?.toFixed(2) || 'N/A'}</td>
+                            </tr>
+                        `;
+                    });
+                    invoiceHtml += `
+                            </tbody>
+                        </table>
+                        <p style="text-align: right; font-size: 1.2em; font-weight: bold; margin-top: 20px;">
+                            Invoice Total: $${data.invoice_total?.toFixed(2) || 'N/A'}
+                        </p>
+                    `;
+                    invoiceDetailsDiv.innerHTML = invoiceHtml;
+
+                } catch (error) {
+                    invoiceDetailsDiv.innerHTML = `<h3>Invoice Details:</h3><p class="error-message">Error fetching invoice: ${error.message}. Is backend running?</p>`;
+                }
+            };
+
+            // Event listener for Generate Invoice button
+            document.getElementById('generate-invoice-btn').addEventListener('click', generateInvoice);
+
+
+            // --- AI Chat Logic and AI Insights/Design display ---
+            const aiChatContainer = document.getElementById('ai-chat-container');
+            const aiQueryInput = document.getElementById('ai-query-input');
+            const sendQueryButton = document.getElementById('send-query-button');
+
+            const updateChatDisplay = () => {
+                if (!aiChatContainer) return;
+                aiChatContainer.innerHTML = ''; 
+                aiChatHistory.forEach(msg => {
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message', msg.role === 'user' ? 'user-message' : 'ai-message');
+                    messageElement.innerHTML = `<p style="font-weight: 600; margin-bottom: 5px;">${msg.role === 'user' ? 'You:' : 'AI:'}</p><p style="white-space: pre-wrap; margin: 0;">${msg.content}</p>`;
+                    aiChatContainer.appendChild(messageElement);
+                });
+                aiChatContainer.scrollTop = aiChatContainer.scrollHeight; 
+            };
+
+            // Main function to send queries to the AI backend
+            const sendAiQuery = async (query, targetElementId = null) => { 
+                if (!query.trim()) return; 
+
+                if (isAiLoading) {
+                    if (!targetElementId) { 
+                        alert("AI is already processing a request. Please wait.");
+                    }
+                    return; 
+                }
+                isAiLoading = true;
+                aiQueryInput.disabled = true;
+                sendQueryButton.disabled = true;
+                if (!targetElementId) { 
+                    aiQueryInput.value = ''; 
+                }
+
+                if (!targetElementId) {
+                    const userMessage = { role: "user", content: query };
+                    aiChatHistory.push(userMessage);
+                    updateChatDisplay(); 
+                }
+
+                if (!targetElementId) {
+                    const thinkingMessage = { role: "assistant", content: "AI is thinking..." };
+                    aiChatHistory.push(thinkingMessage);
+                    updateChatDisplay();
+                } else {
+                    const targetElement = document.getElementById(targetElementId);
+                    if (targetElement) {
+                        if (targetElementId === 'generated-design-output') {
+                             targetElement.innerHTML = `<h4>Your Design Idea:</h4><p class="loading">Generating new design idea...</p>`;
+                        } else {
+                            targetElement.innerHTML = '<p class="loading">Loading AI recommendation...</p>';
+                        }
+                    }
+                }
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/ai/query`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query: query }),
+                    });
+                    const result = await response.json();
+
+                    if (!targetElementId) {
+                       aiChatHistory.pop(); 
+                    }
+
+                    let aiContent;
+                    if (response.ok) {
+                        aiContent = result.response || "No response from AI.";
+                        
+                        try {
+                            const parsed = JSON.parse(aiContent);
+                            
+                            if (parsed.active_customer_loyalty_rewards) { // Active Customer Loyalty
+                                if (targetElementId === 'loyalty-recommendations') {
+                                    const ul = document.createElement('ul');
+                                    ul.style.listStyle = 'none'; 
+                                    ul.style.padding = '0';
+                                    if (parsed.active_customer_loyalty_rewards.length > 0) {
+                                        parsed.active_customer_loyalty_rewards.forEach(rec => {
+                                            const li = document.createElement('li');
+                                            li.textContent = `Customer ${rec.customer_name} (${rec.customer_id}): ${rec.reward}`;
+                                            ul.appendChild(li);
+                                        });
+                                        document.getElementById('loyalty-recommendations').innerHTML = ''; 
+                                        document.getElementById('loyalty-recommendations').appendChild(ul);
+                                    } else {
+                                        document.getElementById('loyalty-recommendations').innerHTML = '<p>No loyalty recommendations for active customers at this time.</p>';
+                                    }
+                                    return; 
+                                }
+                                aiContent = JSON.stringify(parsed, null, 2); 
+                            }
+                            else if (parsed.recommendation) { // Single Loyalty Recommendation (from direct customer button)
+                                aiContent = parsed.recommendation;
+                                if (targetElementId === 'loyalty-recommendations') {
+                                    document.getElementById('loyalty-recommendations').innerHTML = `<p>${aiContent}</p>`;
+                                    return; 
+                                }
+                            } 
+                            else if (parsed.dynamic_advice) { // Dynamic Pricing/Production
+                                if (parsed.dynamic_advice.length > 0) {
+                                    aiContent = "Dynamic Pricing & Production Advice:\n" + parsed.dynamic_advice.map(d => `- Product: ${d.name} (${d.product_id}) - ${d.suggestion}`).join('\n');
+                                    if (targetElementId === 'dynamic-advice-list') {
+                                        const ul = document.getElementById('dynamic-advice-list');
+                                        ul.innerHTML = ''; 
+                                        parsed.dynamic_advice.forEach(d => {
+                                            const li = document.createElement('li');
+                                            li.textContent = `Product: ${d.name} (${d.product_id}) - ${d.suggestion}`;
+                                            ul.appendChild(li);
+                                        });
+                                        return; 
+                                    }
+                                } else {
+                                    aiContent = "No specific dynamic pricing or production advice at the moment.";
+                                }
+                            } else if (parsed.website_problems) { // Website Problems
+                                if (parsed.website_problems.length > 0) {
+                                    aiContent = "Detected Website Problems:\n" + parsed.website_problems.map(p => `- [${p.type}] ${p.description}. ${p.suggested_fix}`).join('\n');
+                                    if (targetElementId === 'website-problems-list') {
+                                        const ul = document.getElementById('website-problems-list');
+                                        ul.innerHTML = ''; 
+                                        parsed.website_problems.forEach(p => {
+                                            const li = document.createElement('li');
+                                            li.classList.add(p.type.toLowerCase());
+                                            li.innerHTML = `<strong>[${p.type}]</strong> ${p.timestamp}: ${p.description} <br> <em>${p.suggested_fix}</em>`;
+                                            ul.appendChild(li);
+                                        });
+                                        return; 
+                                    }
+                                } else {
+                                    aiContent = "No critical website problems detected.";
+                                }
+                            } else if (parsed.design_idea) { // Store Design Ideas
+                                aiContent = `Store Design Idea (${parsed.design_idea.trend} ${parsed.design_idea.store_type}):\nDescription: ${parsed.design_idea.description}\nColor Palette: ${parsed.design_idea.color_palette_suggestion.join(', ')}\nTypography: Headings - ${parsed.design_idea.typography_suggestion.headings}, Body - ${parsed.design_idea.typography_suggestion.body}\nLayout: ${parsed.design_idea.layout_suggestion}\nInteractive Elements: ${parsed.design_idea.interactive_elements_suggestion}\nUnique Element: ${parsed.design_idea.unique_element_idea}`;
+                                
+                                if (targetElementId === 'generated-design-output') { 
+                                    document.getElementById('design-description').textContent = parsed.design_idea.description;
+                                    document.getElementById('design-colors').innerHTML = parsed.design_idea.color_palette_suggestion.map(color => `<span class="color-circle" style="background-color:${color};"></span>${color}`).join('');
+                                    document.getElementById('design-typography').textContent = `Headings: ${parsed.design_idea.typography_suggestion.headings}, Body: ${parsed.design_idea.typography_suggestion.body}`;
+                                    document.getElementById('design-unique-element').textContent = parsed.design_idea.unique_element_idea;
+                                    
+                                    const layoutParagraph = document.createElement('p');
+                                    layoutParagraph.innerHTML = `<strong>Layout:</strong> ${parsed.design_idea.layout_suggestion}`;
+                                    const interactiveParagraph = document.createElement('p');
+                                    interactiveParagraph.innerHTML = `<strong>Interactive Elements:</strong> ${parsed.design_idea.interactive_elements_suggestion}`;
+
+                                    const generatedOutputDiv = document.getElementById('generated-design-output');
+                                    generatedOutputDiv.appendChild(layoutParagraph);
+                                    generatedOutputDiv.appendChild(interactiveParagraph);
+
+                                    const imgElement = document.getElementById('design-preview-image');
+                                    imgElement.src = parsed.design_idea.mock_design_preview_url;
+                                    imgElement.style.display = 'block';
+                                    return;
+                                }
+                            } else if (parsed.error) {
+                                aiContent = `AI Error: ${parsed.error}`;
+                            } else {
+                                aiContent = JSON.stringify(parsed, null, 2);
+                            }
+                        } catch (e) {
+                            // Not a JSON string from AI module, use as is.
+                        }
+                    } else {
+                        aiContent = `Error from AI: ${result.error || "Unknown error"}`;
+                    }
+
+                    if (!targetElementId) { 
+                        const aiMessage = { role: "assistant", content: aiContent };
+                        aiChatHistory.push(aiMessage);
+                    } else {
+                        const targetElement = document.getElementById(targetElementId);
+                        if (targetElement && targetElement.innerHTML.includes('loading')) { 
+                            targetElement.innerHTML = `<p class="error-message">Error loading AI data: ${aiContent}</p>`; 
+                        }
+                    }
+
+                } catch (error) {
+                    if (!targetElementId) {
+                        aiChatHistory.pop(); 
+                        const errorMessage = { role: "assistant", content: `Failed to connect to AI backend: ${error.message}. Is your Flask API running?` };
+                        aiChatHistory.push(errorMessage);
+                    } else {
+                        const targetElement = document.getElementById(targetElementId);
+                        if (targetElement) targetElement.innerHTML = `<p class="error-message">Error loading: ${error.message}</p>`;
+                    }
+                } finally {
+                    isAiLoading = false;
+                    aiQueryInput.disabled = false;
+                    sendQueryButton.disabled = false;
+                    if (!targetElementId) { 
+                        updateChatDisplay(); 
+                    }
+                    
+                    fetchFinancials();
+                    fetchCustomers();
+                    fetchInventory();
+                    fetchCompetitors(); 
+                    fetchPurchases(); 
+                }
+            };
+
+            // New: Function to fetch and display the current store design
+            const fetchCurrentStoreDesign = async () => {
+                const currentDesignDiv = document.getElementById('current-design-preview');
+                if (!currentDesignDiv) return;
+
+                currentDesignDiv.innerHTML = '<p class="loading">Loading current store design details...</p>';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/store-design/current`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    const data = await response.json();
+
+                    if (data.error) {
+                        currentDesignDiv.innerHTML = `<p class="error-message">Error: ${data.error}</p>`;
+                        return;
+                    }
+
+                    const currentDesign = data.current_store_design;
+                    currentDesignDiv.innerHTML = `
+                        <h4>Theme: ${currentDesign.name}</h4>
+                        <p>${currentDesign.description}</p>
+                        <p><strong>Last Updated:</strong> ${currentDesign.last_updated}</p>
+                        <p><strong>Layout Summary:</strong> ${currentDesign.style_elements.layout_summary}</p>
+                        <p><strong>Color Palette:</strong> 
+                            ${currentDesign.style_elements.color_palette.map(color => `<span class="color-circle" style="background-color:${color};"></span>${color}`).join('')}
+                        </p>
+                        <p><strong>Typography:</strong> Headings: ${currentDesign.style_elements.typography.headings}, Body: ${currentDesign.style_elements.typography.body}</p>
+                        <p><strong>Interactive Elements:</strong> ${currentDesign.style_elements.interactive_elements}</p>
+                        ${currentDesign.mock_preview_url ? `<img src="${currentDesign.mock_preview_url}" alt="Current Design Preview">` : ''}
+                    `;
+
+                } catch (error) {
+                    currentDesignDiv.innerHTML = `<p class="error-message">Error fetching current design: ${error.message}.</p>`;
+                }
+            };
+
+
+            // Functions to directly trigger AI queries for insights/website/design tabs
+            const displayActiveCustomerLoyaltyRewards = async () => { 
+                const loyaltyRecDiv = document.getElementById('loyalty-recommendations');
+                if (!loyaltyRecDiv) return;
+                loyaltyRecDiv.innerHTML = '<p class="loading">Loading AI recommendations for active customers...</p>';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/loyalty/active-customers`);
+                    const data = await response.json();
+
+                    if (data.error) {
+                        loyaltyRecDiv.innerHTML = `<p class="error-message">Error: ${data.error}</p>`;
+                        return;
+                    }
+                    if (data.message) { 
+                        loyaltyRecDiv.innerHTML = `<p>${data.message}</p>`;
+                        return;
+                    }
+                    
+                    if (data.active_customer_loyalty_rewards && data.active_customer_loyalty_rewards.length > 0) {
+                        const ul = document.createElement('ul');
+                        ul.style.listStyle = 'none'; 
+                        ul.style.padding = '0';
+                        data.active_customer_loyalty_rewards.forEach(rec => {
+                            const li = document.createElement('li');
+                            li.textContent = `Customer ${rec.customer_name} (${rec.customer_id}): ${rec.reward}`;
+                            li.style.backgroundColor = '#e8f6f3';
+                            li.style.padding = '12px 18px';
+                            li.style.marginBottom = '10px';
+                            li.style.borderRadius = '8px';
+                            li.style.borderLeft = '5px solid #1abc9c';
+                            li.style.fontSize = '0.95em';
+                            ul.appendChild(li);
+                        });
+                        loyaltyRecDiv.innerHTML = ''; 
+                        loyaltyRecDiv.appendChild(ul);
+                    } else {
+                        loyaltyRecDiv.innerHTML = '<p>No loyalty recommendations for active customers at this time.</p>';
+                    }
+                } catch (error) {
+                    loyaltyRecDiv.innerHTML = `<p class="error-message">Error fetching active customer loyalty rewards: ${error.message}.</p>`;
+                }
+            };
+
+            const displayDynamicPricingAdvice = () => {
+                const dynamicAdviceList = document.getElementById('dynamic-advice-list');
+                if (dynamicAdviceList) {
+                    dynamicAdviceList.innerHTML = '<li><p class="loading">Generating dynamic pricing advice...</p></li>';
+                    sendAiQuery('analyze dynamic pricing and production', 'dynamic-advice-list');
+                }
+            };
+
+            const displayWebsiteProblems = () => {
+                const websiteProblemsList = document.getElementById('website-problems-list');
+                if (websiteProblemsList) {
+                    websiteProblemsList.innerHTML = '<li><p class="loading">Detecting website problems...</p></li>';
+                    sendAiQuery('detect website problems', 'website-problems-list');
+                }
+            };
+
+
+            // Event listeners for AI chat
+            sendQueryButton.addEventListener('click', () => sendAiQuery(aiQueryInput.value));
+            aiQueryInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendAiQuery(aiQueryInput.value);
+                }
+            });
+
+            // Quick query buttons
+            window.sendQuickQuery = (query) => { 
+                sendAiQuery(query);
+            };
+            
+            // Event listener for the design idea generation button
+            document.getElementById('generate-design-btn').addEventListener('click', () => {
+                const trend = document.getElementById('design-trend').value;
+                const storeType = document.getElementById('store-type').value;
+                sendAiQuery(`generate store design idea for a ${storeType} with a ${trend} trend`, 'generated-design-output'); 
+            });
+
+            // Initial data load when the page loads
+            fetchFinancials();
+            fetchCustomers();
+            fetchInventory();
+            fetchCompetitors();
+            fetchPurchases(); 
+            updateChatDisplay(); 
+        });
+    </script>
+</body>
+</html>
